@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <script defer type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script defer src="./choices/choices.min.js"></script>
+    <script defer src="./js/modalField.js"></script>
+    <script defer src="./js/main.js"></script>
+    <link rel="stylesheet" href="./choices/choices.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header__container">
+            <a class="header__logo" href="#">skb.</a>
+            <input class="header__input" type="text" placeholder="Введите запрос">
+        </div>
+    </header>
+    <main class="main">
+        <div class="container">
+            <h1>Клиенты</h1>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th class="tbl__head">
+                            <button class="tbl__button btn__up btn__id" id="btn__id">
+                                ID
+                            </button>
+                        </th>
+                        <th class="tbl__head tbl__FIO">
+                            Фамилия Имя Отчество
+                            <button class="tbl__button btn__up" id="btn__name">А-Я</button>
+                        </th>
+                        <th class="tbl__head head__date">
+                            Дата и время создания
+                            <button class="tbl__button btn__up" id="btn__dateCreate">
+                            </button>
+                        </th>
+                        <th class="tbl__head head__date">
+                            Последние изменения
+                            <button class="tbl__button btn__up" id="btn__dateChange">
+                            </button>
+                        </th>
+                        <th class="tbl__head">
+                            Контакты
+                        </th>
+                        <th class="tbl__head">
+                            <span>Действия</span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="tbl__body__tr loading">
+                        <td class="tbl__td"></td>
+                        <td class="tbl__td"></td>
+                        <td class="tbl__td">
+                            <div class="load"></div>
+                        </td>
+                        <td class="tbl__td">
+                        </td>
+                        <td class="tbl__td"></td>
+                        <td class="tbl__td tbl__btns">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="addClient closed" data-modal="#modal1">Добавить клиента</button>
+    </main>
+    <div class="modal" id="modal1">
+        <h3 class="content__title"></h3>
+        <form class="form__addClient" id="form__addClient" action="">
+            <div class="content__input__box">
+                <input type="text" class="modal__input" id="surname" required>
+                <span class="lbl">Фамилия<span class="input__star">*</span></span>
+            </div>
+            <div class="content__input__box">
+                <input type="text" class="modal__input" id="name" required>
+                <span class="lbl">Имя<span class="input__star">*</span></span>
+            </div>
+            <div class="content__input__box">
+                <input type="text" class="modal__input" id="middle-name">
+                <span class="lbl__middle">Отчество</span>
+            </div>
+            <div class="form__contact">
+                <button class="btn__addContact" type="button">Добавить контакт</button>
+            </div>
+            <button class="form__btn" data-modal="#modal1">Сохранить</button>
+        </form>
+        <button class="form__close" id="btn__bifacial" data-modal="#modal1">Отмена</button>
+        <button type="button" class="modal__close" data-modal="#modal1"></button>
+    </div>
+    <div class="modal" id="modal__delete">
+        <div class="delete__client">
+            <h3 class="content__title">Удалить клиента</h3>
+            <p>Вы действительно хотите удалить данного клиента?</p>
+            <button class="form__btn form__delete__contact" data-modal="#modal__delete">Удалить</button>
+            <button class="form__cancel" data-modal="#modal__delete">Отмена</button>
+        </div>
+        <button type="button" class="modal__close" data-modal="#modal__delete"></button>
+    </div>
+</body>
+
+</html>
