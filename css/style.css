@@ -452,12 +452,15 @@ tbody td {
 }
 
 .modal__input {
+    position: relative;
     font-size: 14px;
     width: 100%;
     padding: 4px 0 4px 2px;
     border: 0;
+    background: transparent;
     border-bottom: 1px solid rgba(200, 197, 209, 0.5);
     outline: none;
+    z-index: 1;
 }
 
 .modal__input+.lbl {
@@ -467,6 +470,7 @@ tbody td {
     color: var(--txt_grey);
     font-size: 14px;
     transition: .2s;
+    z-index: 0;
 }
 
 .modal__input:focus+.lbl,
@@ -518,7 +522,7 @@ tbody td {
 .btn__addContact {
     display: block;
     position: relative;
-    z-index: 2;
+    z-index: 0;
     padding: 8px 0 8px 20px;
     background: url('../img/svg/add_circle_outline.svg') left no-repeat;
     transition: .3s ease;
@@ -646,6 +650,16 @@ tbody td {
 .animated {
     animation: uprise 1.2s;
 }
+.error{
+    display: none;
+}
+
+.error p{
+    padding-bottom: 10px;
+    color: #F06A4D;
+    font-size: 10px;
+    line-height: 13.62px;
+}
 
 /*Анимашки*/
 @keyframes uprise {
@@ -742,6 +756,9 @@ tbody td {
         align-items: flex-start;
         padding: 20px;
     }
+    .overlay__start{
+        transform: translateX(1000px);
+    }
 
     .overlay .modal {
         max-width: 300px;
@@ -752,4 +769,11 @@ tbody td {
         display: flex;
         flex-wrap: wrap;
     }
+    .add__contact__field {
+        padding: 0 25px 25px;
+    }
+    .add__contact__input{
+        padding-left: 5px;
+    }
+
 }

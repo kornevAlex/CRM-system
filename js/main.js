@@ -1,14 +1,67 @@
 document.addEventListener('DOMContentLoaded', async function () {
+    const formClose = document.querySelector(".form__close")
+    const modalClose = document.querySelectorAll(".modal__close")
+    const formCancel = document.querySelectorAll(".form__cancel")
+    const addClient = document.querySelector('.addClient')
     const btnAddContact = document.querySelector('.btn__addContact')
     const modalForm = document.querySelector('#form__addClient')
     const contactField = document.querySelector('.form__contact')
     const inputMiddleName = document.querySelector('#middle-name')
     const tblBtn = document.querySelectorAll('.tbl__button')
     const deleteClient = document.querySelector('.form__delete__contact')
+    const contentTitle = document.querySelector('.content__title')
+    const btnBifacial = document.getElementById('btn__bifacial')
     let fieldEntry = document.querySelector('.header__input')
     let itsTrue = false
     let timer
     let change
+    /*Функции модального окна */
+    function closeModal(e) {
+        this.parentNode.classList.remove("open")
+        const parent = this.parentNode.parentNode
+        setTimeout(function () {
+            parent.classList.remove("open")
+        }, 350);
+    }
+
+    async function fieldAddClient(e) {
+        e.stopImmediatePropagation;
+        localStorage.removeItem('id')
+        const fullName = document.querySelectorAll('.modal__input')
+        const modal = document.getElementById('modal1')
+
+        modal.parentNode.classList.add("open");
+        btnBifacial.removeEventListener('click', onDelete)
+
+        for (let el of fullName) {
+            el.value = ''
+            if (el.id === 'middle-name') el.nextElementSibling.classList.remove('lbl__valid')
+        }
+
+        contentTitle.innerHTML = `Новый клиент`
+        btnBifacial.innerHTML = 'Отмена'
+
+
+        setTimeout(function () {
+            modal.classList.add("open");
+        }, 350);
+
+    }
+
+    function closeUpdateClientsModal(e) {
+        const contactField = document.querySelectorAll('.add__contact__field')
+        const addContactBtn = document.querySelector('.form__contact')
+        this.parentNode.classList.remove("open")
+        const parent = this.parentNode.parentNode
+        setTimeout(function () {
+            parent.classList.remove("open")
+            addContactBtn.style.height = '35px'
+
+            contactField.forEach(el => {
+                el.remove()
+            })
+        }, 350);
+    }
 
     function deleteClassMiddleName() {
         if (!this.value) this.nextElementSibling.classList.remove('lbl__valid')
@@ -82,6 +135,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         if (contacts.length === 9) {
             let s = 0
+
             setTimeout(function name() {
                 const height = this.offsetHeight - 2
                 this.style.height = `${height}px`
@@ -156,6 +210,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 this.value = "";
             }
         }
+
         cloneInput.value = ''
         switch (event.detail.value) {
             case 'Телефон':
@@ -167,13 +222,21 @@ document.addEventListener('DOMContentLoaded', async function () {
             case 'Email':
                 cloneInput.type = 'email'
                 break
+            case 'VK':
+                cloneInput.type = 'text'
+                cloneInput.addEventListener("focus", function () {
+                    this.value = 'vk.com/'
+                });
+
             default:
                 cloneInput.type = 'text'
         }
     }
     /*Запись и перезапись*/
     async function postSubmit(id = '') {
-        let check = false
+        let check = true
+        const errorField = document.querySelector('.error')
+        const errorDescription = document.querySelector('.error__description')
         const fullName = document.querySelectorAll('.modal__input')
         const surname = fullName[0].value,
             name = fullName[1].value,
@@ -187,12 +250,27 @@ document.addEventListener('DOMContentLoaded', async function () {
                     value: el.value
                 }
                 arrContact.push(obj)
+                const regEmail = /[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}/igm
+                console.log(obj.value.length)
+                switch (obj.type) {
+                    case 'Email':
+                        if (!regEmail.test(obj.value)) check = false
+                        errorDescription.innerHTML = 'Ошибка, почта указана в неверном формате'
+                        break
+                    case 'Телефон':
+                        if (obj.value.length !== 18) check = false
+                        errorDescription.innerHTML = 'Ошибка, телефон указан в неверном формате'
+                        break
+
+                }
             }
+
         }
-        /*Валидация формы */
         /*Отправка на сервер */
+        if (check) {
+            errorField.style.display = 'none'
             if (id) {
-                const response = await fetch(`http://localhost:3000/api/clients/${id}`, {
+                await fetch(`http://localhost:3000/api/clients/${id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({
                         name,
@@ -207,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 })
             }
             else {
-                const response = await fetch('http://localhost:3000/api/clients', {
+                await fetch('http://localhost:3000/api/clients', {
                     method: 'POST',
                     body: JSON.stringify({
                         name,
@@ -221,25 +299,74 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 })
             }
+            renderTable(await getData())
+            closeModal.apply(document.getElementById('modal1'))
+        }
+        else {
+            errorField.style.display = "block"
+        }
+
+    }
+    /*Изменение клиента */
+    async function updateClient(e) {
+        e.stopImmediatePropagation;
+        const modal = document.getElementById('modal1')
+        const id = this.parentNode.parentNode.parentNode.firstElementChild.textContent
+        const client = await getData(id)
+        const fullName = document.querySelectorAll('.modal__input')
+        let surname = fullName[0],
+            name = fullName[1],
+            lastName = fullName[2]
+        localStorage.setItem('id', JSON.stringify(this.parentNode.parentNode.parentNode.firstElementChild.textContent))
+        contentTitle.innerHTML = `Изменить клиента &nbsp;<span>ID: ${client.id}</span>`
+        surname.value = client.surname
+        name.value = client.name
+        lastName.value = client.lastName || ''
+        lastName.value.length !== 0 ? addClassInputMiddleName.apply(lastName) : null
+        btnBifacial.innerHTML = 'Удалить клиента'
+        document.getElementById('btn__bifacial').addEventListener('click', onDelete)
+
+        client.contacts.map(el => {
+            createContactField(el.type, el.value)
+
+        })
+        modal.parentNode.classList.add("open");
+        setTimeout(function () {
+            modal.classList.add("open");
+        }, 350);
 
     }
 
+    /*Вызов окна удаления */
+
+    function deleteClients(e) {
+        e.stopImmediatePropagation;
+        const modal = document.getElementById('modal__delete')
+        localStorage.setItem('id', JSON.stringify(this.parentNode.parentNode.parentNode.firstElementChild.textContent))
+        modal.parentNode.classList.add('open')
+        setTimeout(function () {
+            modal.classList.add("open");
+        }, 350);
+
+    }
 
     /*Отрисовка таблицы */
     async function renderTable(arr) {
-        $(".addClient").removeClass('closed')
+        document.querySelector(".addClient").classList.remove('closed')
         const tbody = document.querySelector('tbody')
         tbody.innerHTML = ''
         const newArr = transformData(arr)
         newArr.map(el => {
             const tr = document.createElement('tr')
             tr.classList.add('tbl__body__tr')
+
             for (const i in el) {
                 const td = document.createElement('td')
                 td.classList.add('tbl__td')
                 tr.append(td)
                 if (i === 'id') {
                     td.innerHTML = `<span class ='txt__gray tbl__id'>${el[i]}</span>`
+                    tr.id = el[i]
                 }
                 else if (i === 'contacts' && i.length > 0) {
                     const contList = document.createElement('ul')
@@ -279,47 +406,14 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
             tbody.append(tr)
         })
-        $(".tbl__change__btn").on('click', async function (e) {
-            e.stopImmediatePropagation;
-            var $this = $(this),
-                modal = $($this).data("modal");
-            const id = this.parentNode.parentNode.parentNode.firstElementChild.textContent
-            const client = await getData(id)
-            localStorage.setItem('id', JSON.stringify(this.parentNode.parentNode.parentNode.firstElementChild.textContent))
-            $('.content__title')[0].innerHTML = `Изменить клиента &nbsp;<span>ID: ${client.id}</span>`
-            $('#surname')[0].value = client.surname
-            $('#name')[0].value = client.name
-            $('#middle-name')[0].value = client.lastName || ''
-            $('#middle-name')[0].value.length !== 0 ? addClassInputMiddleName.apply($('#middle-name')[0]) : null
-            $('#btn__bifacial').addClass('delete__clients')
-            $('.delete__clients').removeClass('form__close')
-            $('.delete__clients')[0].innerHTML = 'Удалить клиента'
-            $('.delete__clients').on('click', onDelete)
-
-            client.contacts.map(el => {
-                createContactField(el.type, el.value)
-
-            })
-            $(modal).parents(".overlay").addClass("open");
-            setTimeout(function () {
-                $(modal).addClass("open");
-            }, 350);
-
-        });
-
-        $(".tbl__delete__btn").on('click', function (e) {
-            e.stopImmediatePropagation;
-            var $this = $(this),
-                modal = $($this).data("modal");
-            localStorage.setItem('id', JSON.stringify(this.parentNode.parentNode.parentNode.firstElementChild.textContent))
-            $(modal).parents(".overlay").addClass("open");
-            setTimeout(function () {
-                $(modal).addClass("open");
-            }, 350);
-
-        });
+        /*Функции изменения и удаления клиентов */
+        const tblBtn = document.querySelectorAll('.tbl__btn')
+        for (let el of tblBtn) {
+            el.firstElementChild.addEventListener('click', updateClient)
+            el.lastElementChild.addEventListener('click', deleteClients)
+        }
     }
-
+    /*Преобразование входящих данных в нужный нам массив */
     function transformData(arr) {
         const newArr = arr.map(el => {
             const dateCreate = new Date(el.createdAt)
@@ -413,12 +507,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     /*Удаление клиента */
-    async function onDelete() {
+    async function onDelete(e) {
+        e.preventDefault()
         const id = JSON.parse(localStorage.getItem('id'))
+        const tr = document.getElementById(`${id}`)
+
+        tr.remove()
         fetch(`http://localhost:3000/api/clients/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }
         })
-        renderTable(await getData())
+        closeModal.apply(document.getElementById('modal__delete'))
     }
 
     renderTable(await getData())
@@ -426,10 +527,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     inputMiddleName.addEventListener('blur', deleteClassMiddleName)
     inputMiddleName.addEventListener('focus', addClassInputMiddleName)
-
+    formClose.addEventListener('click', closeModal)
+    addClient.addEventListener('click', fieldAddClient)
     btnAddContact.addEventListener('click', createContactField)
 
-    modalForm.addEventListener('submit', function () {
+    modalForm.addEventListener('submit', function (even) {
+        even.preventDefault()
         let id = JSON.parse(localStorage.getItem('id'))
         if (id) postSubmit(id)
         else postSubmit()
@@ -445,5 +548,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     for (let el of tblBtn) {
         el.addEventListener('click', sortTable)
     }
-
+    for (let el of modalClose) {
+        el.addEventListener('click', closeUpdateClientsModal)
+    }
+    for (let el of formCancel) {
+        el.addEventListener('click', closeModal)
+    }
 })
