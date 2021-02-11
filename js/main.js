@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', async function () {
+    setTimeout(function(){
+        for(let el of document.querySelectorAll('.modal')){
+            el.classList.remove('overlay__start')
+        }
+    }, 400)
+
+
+
     const formClose = document.querySelector(".form__close")
     const modalClose = document.querySelectorAll(".modal__close")
     const formCancel = document.querySelectorAll(".form__cancel")

@@ -421,7 +421,9 @@ tbody td {
     transition: 0.35s ease-in-out;
     overflow-y: hidden;
 }
-
+.overlay__start{
+    left: 400%;
+}
 .overlay .modal.open {
     opacity: 1;
     pointer-events: inherit;
@@ -755,9 +757,6 @@ tbody td {
     .overlay {
         align-items: flex-start;
         padding: 20px;
-    }
-    .overlay__start{
-        transform: translateX(1000px);
     }
 
     .overlay .modal {
