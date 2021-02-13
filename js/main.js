@@ -5,11 +5,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }, 400)
 
-
-
+    const errorField = document.querySelector('.error')
     const formClose = document.querySelector(".form__close")
     const modalClose = document.querySelectorAll(".modal__close")
-    const formCancel = document.querySelectorAll(".form__cancel")
+    const formCancel = document.querySelector(".form__cancel")
     const addClient = document.querySelector('.addClient')
     const btnAddContact = document.querySelector('.btn__addContact')
     const modalForm = document.querySelector('#form__addClient')
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     }
 
-    function closeUpdateClientsModal(e) {
+    function closeUpdateClientsModal() {
         const contactField = document.querySelectorAll('.add__contact__field')
         const addContactBtn = document.querySelector('.form__contact')
         this.parentNode.classList.remove("open")
@@ -161,6 +160,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             'addItem',
             whyContact
         )
+        contactInput.addEventListener('input', deleteError)
     }
 
     function deleteContact() {
@@ -187,6 +187,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         this.parentNode.remove()
 
+    }
+    function deleteError(){
+        errorField.style.display = 'none'
     }
 
     function whyContact(event) {
@@ -220,6 +223,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         cloneInput.value = ''
+        cloneInput.addEventListener('input', deleteError)
         switch (event.detail.value) {
             case 'Телефон':
                 cloneInput.type = 'tel'
@@ -234,16 +238,16 @@ document.addEventListener('DOMContentLoaded', async function () {
                 cloneInput.type = 'text'
                 cloneInput.addEventListener("focus", function () {
                     this.value = 'vk.com/'
+                
                 });
-
+                break
             default:
                 cloneInput.type = 'text'
         }
     }
     /*Запись и перезапись*/
-    async function postSubmit(id = '') {
+    async function clientAddSubmit(id = '') {
         let check = true
-        const errorField = document.querySelector('.error')
         const errorDescription = document.querySelector('.error__description')
         const fullName = document.querySelectorAll('.modal__input')
         const surname = fullName[0].value,
@@ -259,6 +263,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }
                 arrContact.push(obj)
                 const regEmail = /[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}/igm
+                const regA = /^(https?:\/\/)([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/
                 console.log(obj.value.length)
                 switch (obj.type) {
                     case 'Email':
@@ -268,6 +273,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                     case 'Телефон':
                         if (obj.value.length !== 18) check = false
                         errorDescription.innerHTML = 'Ошибка, телефон указан в неверном формате'
+                        break
+                    case 'VK':
+                    case 'Facebook':
+                    case 'Другое':
+                        if(!regA.test(obj.value)) check = false
+                        errorDescription.innerHTML = 'Ошибка, должна быть ссылка: http://vk.com'
                         break
 
                 }
@@ -308,7 +319,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 })
             }
             renderTable(await getData())
-            closeModal.apply(document.getElementById('modal1'))
+            closeUpdateClientsModal.apply(document.getElementById('modal1'))
         }
         else {
             errorField.style.display = "block"
@@ -332,7 +343,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         lastName.value = client.lastName || ''
         lastName.value.length !== 0 ? addClassInputMiddleName.apply(lastName) : null
         btnBifacial.innerHTML = 'Удалить клиента'
-        document.getElementById('btn__bifacial').addEventListener('click', onDelete)
+        btnBifacial.addEventListener('click', onDelete)
 
         client.contacts.map(el => {
             createContactField(el.type, el.value)
@@ -381,31 +392,37 @@ document.addEventListener('DOMContentLoaded', async function () {
                     contList.classList.add('contact__list')
                     el[i].map(el => {
                         const contact = document.createElement('li')
+                        const contHref = document.createElement('a')
                         const contact_value = document.createElement('span')
+                        contHref.classList.add('cont__href')
                         contact_value.classList.add('contact_value')
                         contact.classList.add('contact')
                         switch (el.type) {
                             case 'Телефон':
-                                contact.innerHTML = `<i class = 'fa fa-phone'></i>`
+                                contHref.innerHTML = `<i class = 'fa fa-phone'></i>`
+                                contHref.href = `tel:${el.value}`
                                 contact.classList.add('contact__mobile')
                                 break
                             case 'VK':
-                                contact.classList.add('contact__vk')
-                                contact.innerHTML = `<i class = 'fa fa-vk'></i>`
+                                contHref.innerHTML =  `<i class = 'fa fa-vk'></i>`
+                                contHref.href = el.value
                                 break
                             case 'Facebook':
-                                contact.innerHTML = `<i class = 'fa fa-facebook'></i>`
+                                contHref.innerHTML =  `<i class = 'fa fa-facebook'></i>`
+                                contHref.href = el.value
                                 contact.classList.add('contact__facebook')
                                 break
                             case 'Email':
-                                contact.innerHTML = `<i class = 'fa fa-envelope-o'></i>`
+                                contHref.innerHTML = `<i class = 'fa fa-envelope-o'></i>`
+                                contHref.href = `mailto:${el.value}`
                                 break
                             case 'Другое':
-                                contact.innerHTML = `<i class = 'fa fa-user'></i>`
+                                contHref.innerHTML =  `<i class = 'fa fa-user'></i>`
+                                contHref.href = el.value
                         }
                         contact_value.innerHTML = `${el.type}:
                         <b>${el.value}</b>`
-                        contact.append(contact_value)
+                        contact.append(contHref,contact_value)
                         contList.append(contact)
                         td.append(contList)
                     })
@@ -535,15 +552,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     inputMiddleName.addEventListener('blur', deleteClassMiddleName)
     inputMiddleName.addEventListener('focus', addClassInputMiddleName)
-    formClose.addEventListener('click', closeModal)
+    formClose.addEventListener('click', closeUpdateClientsModal)
     addClient.addEventListener('click', fieldAddClient)
     btnAddContact.addEventListener('click', createContactField)
+    formCancel.addEventListener('click', closeModal)
 
     modalForm.addEventListener('submit', function (even) {
         even.preventDefault()
         let id = JSON.parse(localStorage.getItem('id'))
-        if (id) postSubmit(id)
-        else postSubmit()
+        if (id) clientAddSubmit(id)
+        else clientAddSubmit()
     })
 
     deleteClient.addEventListener('click', onDelete)
@@ -558,8 +576,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     for (let el of modalClose) {
         el.addEventListener('click', closeUpdateClientsModal)
-    }
-    for (let el of formCancel) {
-        el.addEventListener('click', closeModal)
     }
 })

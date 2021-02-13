@@ -334,20 +334,22 @@ tbody td {
 
 
 .contact {
-    display: block;
+    display: flex;
+    align-items:center;
+    justify-content: center;
     position: relative;
     width: 16px;
     height: 16px;
     background: var(--firm);
     border-radius: 50%;
-    color: white;
-    text-align: center;
-    font-size: 10px;
     cursor: pointer;
     opacity: 0.7;
     transition: .2s all ease;
 }
-
+    .cont__href{
+        color: white;
+        font-size: 10px;
+    }
 .contact:hover .contact_value {
     display: block;
 }
@@ -361,9 +363,10 @@ tbody td {
     position: absolute;
     content: '';
     padding: 2px 10px 5px 10px;
-    transform: translateX(-47%);
+    transform: translateX(-2%);
     top: -37px;
     height: 31px;
+    color:white;
     background: #333333;
     font-size: 12px;
     clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 55% 80%, 52% 100%, 49% 80%, 0 80%);
@@ -375,7 +378,6 @@ tbody td {
 
 
 .contact__mobile {
-    padding-top: 1px;
     padding-left: 1px;
 }
 
