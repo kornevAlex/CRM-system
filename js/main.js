@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const fullName = document.querySelectorAll('.modal__input')
         const modal = document.getElementById('modal1')
 
-        modal.parentNode.classList.add("open");
+        modal.parentElement.classList.add("open");
         btnBifacial.removeEventListener('click', onDelete)
 
         for (let el of fullName) {
@@ -213,8 +213,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 function (a) {
                     return "\\d{1," + a.length + "}";
                 }).replace(/[+()]/g, "\\$&");
-            reg = new RegExp("^" + reg + "$");
-            if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) {
+            let newReg = new RegExp("^" + reg + "$");
+            if (!newReg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) {
                 this.value = newValue;
             }
             if (event.type === "blur" && this.value.length < 5) {

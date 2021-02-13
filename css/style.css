@@ -180,12 +180,10 @@ li {
 }
 
 .btn__up {
-    margin-left: 2px;
     background: url('../img/svg/arrow_downward_up.svg') center no-repeat;
 }
 
 .btn__down {
-    margin-right: 2px;
     background: url('../img/svg/arrow_downward_down.svg') center no-repeat;
 }
 
@@ -233,9 +231,7 @@ li {
     gap: 7px 7px;
 }
 
-/* .contact:nth-child(n+6){
-    margin-top: 5px;
-} */
+
 .tbl__body__tr {
     position: relative;
     background: white;
@@ -335,7 +331,7 @@ tbody td {
 
 .contact {
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: center;
     position: relative;
     width: 16px;
@@ -346,16 +342,24 @@ tbody td {
     opacity: 0.7;
     transition: .2s all ease;
 }
-    .cont__href{
-        color: white;
-        font-size: 10px;
-    }
+
+.cont__href {
+    padding-bottom: 2px;
+    color: white;
+    font-size: 10px;
+}
+
 .contact:hover .contact_value {
     display: block;
 }
 
 .contact:hover {
     opacity: 1;
+}
+
+.contact__mobile,
+.contact__facebook {
+    padding-top: 1px;
 }
 
 .contact_value {
@@ -366,7 +370,7 @@ tbody td {
     transform: translateX(-2%);
     top: -37px;
     height: 31px;
-    color:white;
+    color: white;
     background: #333333;
     font-size: 12px;
     clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 55% 80%, 52% 100%, 49% 80%, 0 80%);
@@ -377,13 +381,6 @@ tbody td {
 
 
 
-.contact__mobile {
-    padding-left: 1px;
-}
-
-.contact__facebook {
-    padding-top: 1px;
-}
 
 /*Модалка*/
 
@@ -423,9 +420,11 @@ tbody td {
     transition: 0.35s ease-in-out;
     overflow-y: hidden;
 }
-.overlay__start{
+
+.overlay__start {
     left: 400%;
 }
+
 .overlay .modal.open {
     opacity: 1;
     pointer-events: inherit;
@@ -654,11 +653,12 @@ tbody td {
 .animated {
     animation: uprise 1.2s;
 }
-.error{
+
+.error {
     display: none;
 }
 
-.error p{
+.error p {
     padding-bottom: 10px;
     color: #F06A4D;
     font-size: 10px;
@@ -770,10 +770,12 @@ tbody td {
         display: flex;
         flex-wrap: wrap;
     }
+
     .add__contact__field {
         padding: 0 25px 25px;
     }
-    .add__contact__input{
+
+    .add__contact__input {
         padding-left: 5px;
     }
 
