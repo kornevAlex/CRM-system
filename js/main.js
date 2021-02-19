@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    setTimeout(function(){
-        for(let el of document.querySelectorAll('.modal')){
+    setTimeout(function () {
+        for (let el of document.querySelectorAll('.modal')) {
             el.classList.remove('overlay__start')
         }
     }, 400)
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     let change
     /*Функции модального окна */
     function closeModal(e) {
+        errorField.style.display = 'none'
         this.parentNode.classList.remove("open")
         const parent = this.parentNode.parentNode
         setTimeout(function () {
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     async function fieldAddClient(e) {
+        errorField.style.display = 'none'
         e.stopImmediatePropagation;
         localStorage.removeItem('id')
         const fullName = document.querySelectorAll('.modal__input')
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     function closeUpdateClientsModal() {
+        errorField.style.display = 'none'
         const contactField = document.querySelectorAll('.add__contact__field')
         const addContactBtn = document.querySelector('.form__contact')
         this.parentNode.classList.remove("open")
@@ -188,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         this.parentNode.remove()
 
     }
-    function deleteError(){
+    function deleteError() {
         errorField.style.display = 'none'
     }
 
@@ -238,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 cloneInput.type = 'text'
                 cloneInput.addEventListener("focus", function () {
                     this.value = 'vk.com/'
-                
+
                 });
                 break
             default:
@@ -261,24 +264,40 @@ document.addEventListener('DOMContentLoaded', async function () {
                     type: el.previousElementSibling.firstElementChild.firstElementChild.firstElementChild.value,
                     value: el.value
                 }
+
                 arrContact.push(obj)
                 const regEmail = /[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}/igm
                 const regA = /^(https?:\/\/)([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/
-                console.log(obj.value.length)
                 switch (obj.type) {
                     case 'Email':
-                        if (!regEmail.test(obj.value)) check = false
-                        errorDescription.innerHTML = 'Ошибка, почта указана в неверном формате'
+                        if (!regEmail.test(obj.value)) {
+                            check = false
+                            errorDescription.innerHTML = 'Ошибка, почта указана в неверном формате'
+                        }
                         break
                     case 'Телефон':
-                        if (obj.value.length !== 18) check = false
-                        errorDescription.innerHTML = 'Ошибка, телефон указан в неверном формате'
+                        if (obj.value.length !== 18) {
+                            check = false
+                            errorDescription.innerHTML = 'Ошибка, телефон указан в неверном формате'
+                        }
                         break
                     case 'VK':
+                        if (!regA.test(obj.value)) {
+                            check = false
+                            errorDescription.innerHTML = 'Ошибка, должна быть ссылка: http://vk.com'
+                        }
+                        break
                     case 'Facebook':
+                        if (!regA.test(obj.value)) {
+                            check = false
+                            errorDescription.innerHTML = 'Ошибка, должна быть ссылка: http://facebook.com'
+                        }
+                        break
                     case 'Другое':
-                        if(!regA.test(obj.value)) check = false
-                        errorDescription.innerHTML = 'Ошибка, должна быть ссылка: http://vk.com'
+                        if (!regA.test(obj.value)) {
+                            check = false
+                            errorDescription.innerHTML = 'Ошибка, должна быть ссылка: http://'
+                        }
                         break
 
                 }
@@ -328,6 +347,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     /*Изменение клиента */
     async function updateClient(e) {
+        errorField.style.display = 'none'
         e.stopImmediatePropagation;
         const modal = document.getElementById('modal1')
         const id = this.parentNode.parentNode.parentNode.firstElementChild.textContent
@@ -404,11 +424,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                                 contact.classList.add('contact__mobile')
                                 break
                             case 'VK':
-                                contHref.innerHTML =  `<i class = 'fa fa-vk'></i>`
+                                contHref.innerHTML = `<i class = 'fa fa-vk'></i>`
                                 contHref.href = el.value
                                 break
                             case 'Facebook':
-                                contHref.innerHTML =  `<i class = 'fa fa-facebook'></i>`
+                                contHref.innerHTML = `<i class = 'fa fa-facebook'></i>`
                                 contHref.href = el.value
                                 contact.classList.add('contact__facebook')
                                 break
@@ -417,12 +437,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                                 contHref.href = `mailto:${el.value}`
                                 break
                             case 'Другое':
-                                contHref.innerHTML =  `<i class = 'fa fa-user'></i>`
+                                contHref.innerHTML = `<i class = 'fa fa-user'></i>`
                                 contHref.href = el.value
                         }
                         contact_value.innerHTML = `${el.type}:
                         <b>${el.value}</b>`
-                        contact.append(contHref,contact_value)
+                        contact.append(contHref, contact_value)
                         contList.append(contact)
                         td.append(contList)
                     })
